@@ -9,14 +9,14 @@ class DisplayItems extends React.Component {
     this.state = {
       array: [],
       id: "",
-      email:"",
-      price:0
+      email: "",
+      price: 0
     };
 
     this.passid = this.passid.bind(this);
     this.handlesubmit = this.handlesubmit.bind(this);
-    this.handleemail= this.handleemail.bind(this);
-    this.handleprice= this.handleprice.bind(this);
+    this.handleemail = this.handleemail.bind(this);
+    this.handleprice = this.handleprice.bind(this);
   }
 
   componentDidMount() {
@@ -42,35 +42,50 @@ class DisplayItems extends React.Component {
     });
   };
   handlesubmit = () => {
-    console.log(this.state.id,this.state.email,this.state.price);
-    axios
-    .post("https://vdbbudp5z9.execute-api.eu-west-2.amazonaws.com/Stage6/test3",{"id":this.state.id,"email":this.state.email,"price":this.state.price})
-    .then(data => {
-      console.log("data is ", data.data);
-     alert("updated");
-    })
-    .catch(err => {
-      console.log("error is", err);
-      alert("could not update");
-    });
+    console.log(this.state.id, this.state.email, this.state.price);
 
+    if (this.state.email == "" || this.state.price == 0)
+      alert("parameters cannot be empty");
+    else {
+      axios
+        .post(
+          "https://vdbbudp5z9.execute-api.eu-west-2.amazonaws.com/Stage6/test3",
+          {
+            id: this.state.id,
+            email: this.state.email,
+            price: this.state.price
+          }
+        )
+        .then(data => {
+          console.log("data is ", data.data);
+          this.setState({
+            email: "",
+            id: ""
+          });
+          window.location.reload();
+
+          alert("updated");
+        })
+        .catch(err => {
+          console.log("error is", err);
+          alert("could not update");
+        });
+    }
   };
 
-  handleemail=(e)=>{
+  handleemail = e => {
     e.preventDefault();
     this.setState({
-        email: e.target.value
-      });
+      email: e.target.value
+    });
+  };
 
-  }
-
-  handleprice=(e)=>{
+  handleprice = e => {
     e.preventDefault();
     this.setState({
-        price: e.target.value
-      });
-
-  }
+      price: e.target.value
+    });
+  };
 
   render() {
     return (
@@ -97,6 +112,9 @@ class DisplayItems extends React.Component {
                   <p> Total Price: {item.total_price}</p>
 
                   <p> Product id: {item.id} </p>
+                  <p> Billing address: {item.billing_address.address1} </p>
+                  <p>Financial status: {item.financial_status}</p>
+          <p>Payment Gateway:  {item.gateway}</p>
                 </div>
                 <div class="card-action">
                   <a
@@ -115,9 +133,21 @@ class DisplayItems extends React.Component {
             <div class="modal-content">
               <h4>Update Product Info</h4>
               <label for="first_name">Email</label>
-              <input placeholder="email" id="first_name" type="text" class="validate"  onChange={this.handleemail}></input>
+              <input
+                placeholder="email"
+                id="first_name"
+                type="text"
+                class="validate"
+                onChange={this.handleemail}
+              ></input>
               <label for="first_name">Total Price</label>
-              <input placeholder="total price" id="first_name" type="text" class="validate"  onChange={this.handleprice}></input>
+              <input
+                placeholder="total price"
+                id="first_name"
+                type="text"
+                class="validate"
+                onChange={this.handleprice}
+              ></input>
             </div>
             <div class="modal-footer">
               <a
